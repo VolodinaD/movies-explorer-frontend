@@ -1,0 +1,230 @@
+.project {
+    width: 1140px;
+    margin-left: calc((100vw - 1140px) / 2);
+}
+
+.project__title {
+    margin: 110px 0 0;
+    color: #000;
+    font-family: Inter;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.88px;
+    border-bottom: 1px solid #000;
+    padding-bottom: 23px;
+}
+
+.project__container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 70px;
+}
+
+.project__text {
+    display: flex;
+    flex-direction: column;
+    width: 550px;
+}
+
+.project__text_title {
+    margin: 0;
+    color: #000;
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.8px;
+}
+
+.project__text_paragraph {
+    margin: 26px 0 0;
+    color: #000;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.project__duration {
+    display: flex;
+    flex-direction: row;
+    margin-top: 110px;
+    height: 36px;
+}
+
+.project__duration_backend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 228px;
+    background-color: #000;
+    color: #FFF;
+    text-align: center;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.project__duration_frontend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 912px;
+    background-color: #F2F2F2;
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.project__development {
+    display: flex;
+    flex-direction: row;
+    margin: 14px 0 110px 0;
+    color: #A0A0A0;
+    text-align: center;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 17px;
+}
+
+.project__development_backend {
+    margin: 0;
+    width: 228px;
+}
+
+.project__development_frontend {
+    margin: 0;
+    width: 912px;
+}
+
+@media all and (min-width: 320px) and (max-width: 640px) {
+    .project {
+        width: auto;
+        margin-left: 18px;
+        margin-right: 18px;
+    }
+
+    .project__title {
+        margin: 70px 0 0;
+        font-size: 18px;
+        letter-spacing: -0.72px;
+        padding-bottom: 28px;
+    }
+
+    .project__container {
+        display: flex;
+        flex-direction: column;
+        margin-top: 62px;
+    }
+
+    .project__text {
+        width: 100%;
+    }
+
+    .project__text:nth-child(2)  {
+        margin-top: 58px;
+    }
+
+    .project__text_title {
+        font-size: 18px;
+        letter-spacing: -0.72px;
+    }
+
+    .project__text_paragraph {
+        margin: 17px 0 0;
+        font-size: 11px;
+        line-height: 16px;
+    }
+
+    .project__duration {
+        margin-top: 58px;
+        width: 100%;
+        height: 35px;
+    }
+
+    .project__duration_backend {
+        width: 35%;
+        font-size: 11px;
+    }
+
+    .project__duration_frontend {
+        width: 65%;
+        font-size: 11px;
+    }
+
+    .project__development {
+        margin: 10px 0 70px 0;
+        font-size: 11px;
+        font-weight: 400;
+        line-height: normal;
+    }
+
+    .project__development_backend {
+        width: 35%;
+    }
+
+    .project__development_frontend {
+        width: 65%;
+    }
+}
+
+@media all and (min-width: 641px) and (max-width: 1279px) {
+    .project {
+        width: auto;
+        margin-left: 50px;
+        margin-right: 50px;
+    }
+
+    .project__title {
+        margin: 90px 0 0;
+    }
+
+    .project__text:nth-child(2)  {
+        margin-left: 30px;
+    }
+
+    .project__text_paragraph {
+        margin: 22px 0 0;
+        font-size: 12px;
+        line-height: 18px;
+    }
+
+    .project__duration {
+        margin-top: 93px;
+        width: 100%;
+    }
+
+    .project__duration_backend {
+        width: 21%;
+    }
+
+    .project__duration_frontend {
+        width: 79%;
+    }
+
+    .project__development {
+        margin: 14px 0 90px 0;
+        font-weight: 400;
+    }
+
+    .project__development_backend {
+        width: 21%;
+    }
+
+    .project__development_frontend {
+        width: 79%;
+    }
+}

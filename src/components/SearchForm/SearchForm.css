@@ -32,6 +32,17 @@
     border-style: none;
 }
 
+.search-form__error {
+    margin: 10px 0 0;
+    height: 0;
+    color: #FF4062;
+    font-family: Inter;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
 .search-form__line_button {
     margin-right: 11px;
     width: 100px;
@@ -43,8 +54,13 @@
     font-style: normal;
     font-weight: 500;
     line-height: 18px;
+    border: none;
     border-radius: 5px;
     background-color: #000;
+}
+
+.search-form__line_button_disabled {
+    background-color: #B5B8B1;
 }
 
 .search-form__line_input:focus {

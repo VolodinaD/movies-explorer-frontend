@@ -9,7 +9,7 @@ function Header(props) {
     return (
         <header className={`header ${(location.pathname === "/signin") || (location.pathname === "/signup") ? "header__auth" : ""}`}>
             <button type="button" className="header__logo" onClick={props.onMain}></button>
-            <Navigation children={props.children} />
+            <Navigation loggedIn={props.loggedIn} onPopupOpen={props.onPopupOpen} onRegister={props.onRegister} onLogin={props.onLogin} />
         </header>
     );
 }

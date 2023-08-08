@@ -24,9 +24,12 @@
 }
 
 .profile__line:nth-child(2) {
-    margin-bottom: 15px;
     border-bottom: 1px solid #E8E8E8;
     padding-bottom: 16px;
+}
+
+.profile__line:nth-child(4) {
+    margin-top: 15px;
 }
 
 .profile__line_text {
@@ -53,6 +56,31 @@
     outline: none;
 }
 
+.profile__error {
+    margin: 5px 0 0;
+    height: 0;
+    color: #FF4062;
+    font-family: Inter;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-align: right;
+}
+
+.profile__message {
+    position: relative;
+    top: 170px;
+    margin: 0;
+    height: 0;
+    color: #2BE080;
+    font-family: Inter;
+    text-align: center;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+}
+
 .profile__edit {
     width: 28%;
     margin: 217px auto 0;
@@ -67,6 +95,10 @@
     background-color: transparent;
 }
 
+.profile__edit_disabled {
+    opacity: 0.8;
+}
+
 .profile__exit {
     width: 33%;
     margin: 14px auto 70px;
@@ -79,63 +111,6 @@
     line-height: normal;
     border: none;
     background-color: transparent;
-}
-
-.profile-navigation__movies {
-    margin: 0 20px 0 0;
-    width: auto;
-    color: #000;
-    font-family: Inter;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 18px;
-    text-decoration: none;
-}
-
-.profile-navigation__saved-movies {
-    margin-right: 47px;
-    width: auto;
-    color: #000;
-    font-family: Inter;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 18px;
-    text-decoration: none;
-}
-
-.profile-navigation__profile {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 100px;
-    height: 32px;
-    border-radius: 50px;
-    border: 2px solid rgba(170, 170, 170, .2);
-}
-
-.profile-navigation__profile_image {
-    background-image: url(../../images/navigation-profile-image.svg);
-    width: 12px;
-    height: 14px;
-    margin-right: 7px;
-}
-
-.profile-navigation__profile_text {
-    margin: 0;
-    width: auto;
-    color: #000;
-    font-family: Inter;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 16px;
-}
-
-.profile-navigation__button {
-    display: none;
 }
 
 .profile-navigation__main_popup {
@@ -164,36 +139,7 @@
     opacity: 0.8;
 }
 
-.profile-navigation__movies:hover {
-    opacity: 0.8;
-}
-
-.profile-navigation__saved-movies:hover {
-    opacity: 0.8;
-}
-
 @media all and (max-width: 850px) {
-    .profile-navigation__movies {
-        display: none;
-    }
-
-    .profile-navigation__saved-movies {
-        display: none;
-    }
-
-    .profile-navigation__profile {
-        display: none;
-    }
-
-    .profile-navigation__button {
-        display: block;
-        background-image: url(../../images/button/navigation-button.svg);
-        width: 44px;
-        height: 44px;
-        border: none;
-        background-color: transparent;
-    }
-
     .profile-navigation__main_popup {
         display: block;
         margin: 110px 0 0;
@@ -253,9 +199,22 @@
         border: 2px solid rgba(170, 170, 170, .2);
     }
 
-    .profile-navigation__button:hover {
-        cursor: pointer;
-        opacity: 0.6;
+    .profile-navigation__profile_image {
+        background-image: url(../../images/navigation-profile-image.svg);
+        width: 12px;
+        height: 14px;
+        margin-right: 7px;
+    }
+    
+    .profile-navigation__profile_text {
+        margin: 0;
+        width: auto;
+        color: #000;
+        font-family: Inter;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 16px;
     }
 
     .profile-navigation__main_popup:hover {
@@ -309,6 +268,10 @@
     .profile-navigation__profile_popup {
         margin: 440px 0 0;
     }
+
+    .profile__message {
+        top: 320px;
+    }
 }
 
 @media all and (min-width: 641px) and (max-width: 1279px) {
@@ -326,5 +289,9 @@
 
     .profile__exit {
         margin: 16px auto 269px;
+    }
+
+    .profile__message {
+        top: 150px;
     }
 }

@@ -1,53 +1,67 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext.js';
 import './Profile.css';
 import Header from '../Header/Header.js';
 import Popup from '../Popup/Popup.js';
 
 function Profile(props) {
-    const [name, setName] = React.useState('');
-    const [nameInput, setNameInput] = React.useState('');
-    const [emailInput, setEmailInput] = React.useState('');
+    const currentUser = React.useContext(CurrentUserContext);
 
-    React.useEffect(() => {
-        setName('Дарья');
-        setNameInput('Дарья');
-        setEmailInput('bornofdasha@yandex.ru');
-    }, []); 
+    const [formValue, setFormValue] = React.useState({
+        name: currentUser.name,
+        email: currentUser.email,
+    });
 
-    function handleNameInputChange(e) {
-        setNameInput(e.target.value);
+    const [errors, setErrors] = React.useState({
+        name: '',
+        email: '',
+    });
+
+    const [formValid, setFormValid] = React.useState(false);
+
+    function handleChange(e) {
+        const {name, value} = e.target;
+        const error = e.target.validationMessage;
+        
+        setFormValue({
+            ...formValue,
+            [name]: value
+        });
+
+        setErrors({
+            ...errors,
+            [name]: error
+        });
+
+        setFormValid(e.target.closest('form').checkValidity());
     }
 
-    function handleEmailInputChange(e) {
-        setEmailInput(e.target.value);
+    function handleSubmit(e) {
+        e.preventDefault();
+        
+        props.handleEditProfile(formValue);
+        setFormValid(false);
     }
 
     return (
         <>
-            <Header onMain={props.onMain}>
-                <>
-                    <Link to="/movies" className="profile-navigation__movies">Фильмы</Link>
-                    <Link to="/saved-movies" className="profile-navigation__saved-movies">Сохранённые фильмы</Link>
-                    <div className="profile-navigation__profile">
-                        <div className="profile-navigation__profile_image"></div>
-                        <p className="profile-navigation__profile_text">Аккаунт</p>
-                    </div>
-                    <button type="button" className="profile-navigation__button" onClick={props.onPopupOpen}></button>
-                </>
-            </Header>
-            <form className="profile">
-                <h2 className="profile__title">{`Привет, ${name}!`}</h2>
+            <Header onMain={props.onMain} loggedIn={props.loggedIn} onPopupOpen={props.onPopupOpen} onRegister={props.onRegister} onLogin={props.onLogin} />
+            <form className="profile" onSubmit={handleSubmit}>
+                <h2 className="profile__title">{`Привет, ${currentUser.name}!`}</h2>
                 <div className="profile__line">
                     <p className="profile__line_text">Имя</p>
-                    <input type="text" className="profile__line_input" value={nameInput || ''} onChange={handleNameInputChange} required />
+                    <input type="text" name="name" className="profile__line_input" value={formValue.name || ''} onChange={handleChange} minLength="2" maxLength="30" required />
                 </div>
+                <span className="profile__error">{errors.name}</span>
                 <div className="profile__line">
                     <p className="profile__line_text">E-mail</p>
-                    <input type="email" className="profile__line_input" value={emailInput || ''} onChange={handleEmailInputChange} required />
+                    <input type="email" name="email" className="profile__line_input" value={formValue.email || ''} onChange={handleChange} required />
                 </div>
-                <button type="button" className="profile__edit">Редактировать</button>
-                <button type="button" className="profile__exit">Выйти из аккаунта</button>
+                <span className="profile__error">{errors.email}</span>
+                <p className="profile__message">{props.message}</p>
+                <button type="submit" className={`profile__edit ${!formValid || ((formValue.name === currentUser.name) && (formValue.email === currentUser.email)) ? 'profile__edit_disabled' : ''}`} disabled={!formValid || ((formValue.name === currentUser.name) && (formValue.email === currentUser.email))}>Редактировать</button>
+                <button type="button" className="profile__exit" onClick={props.signOut}>Выйти из аккаунта</button>
             </form>
             <Popup isOpen={props.isPopupOpen} onClose={props.onPopupClose}>
                 <>

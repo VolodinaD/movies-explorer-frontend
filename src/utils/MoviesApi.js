@@ -1,4 +1,4 @@
-class Api {
+class MoviesApi {
     _checkResponse(res) {
         if (res.ok) {
             return res.json();
@@ -19,6 +19,6 @@ class Api {
     } 
 }
 
-const api = new Api();
+const moviesApi = new MoviesApi();
 
-export default api;
+export default moviesApi;

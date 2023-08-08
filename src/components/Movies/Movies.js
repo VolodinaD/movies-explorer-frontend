@@ -10,19 +10,9 @@ import Footer from '../Footer/Footer.js';
 function Movies(props) {
     return (
         <>
-            <Header onMain={props.onMain}>
-                <>
-                    <p className="movies-navigation__movies">Фильмы</p>
-                    <Link to="/saved-movies" className="movies-navigation__saved-movies">Сохранённые фильмы</Link>
-                    <Link to="/profile" className="movies-navigation__profile">
-                        <div className="movies-navigation__profile_image"></div>
-                        <p className="movies-navigation__profile_text">Аккаунт</p>
-                    </Link>
-                    <button type="button" className="movies-navigation__button" onClick={props.onPopupOpen}></button>
-                </>
-            </Header>
-            <SearchForm />
-            <MoviesCardList cards={props.cards}/>
+            <Header onMain={props.onMain} loggedIn={props.loggedIn} onPopupOpen={props.onPopupOpen} onRegister={props.onRegister} onLogin={props.onLogin} />
+            <SearchForm findFilms={props.findFilms} handleCheckedClick={props.handleCheckedClick} isChecked={props.isChecked} keyword={props.keyword} />
+            <MoviesCardList cards={props.cards} likeCard={props.likeCard} deleteCard={props.deleteCard} />
             <Footer />
             <Popup isOpen={props.isPopupOpen} onClose={props.onPopupClose}>
                 <>

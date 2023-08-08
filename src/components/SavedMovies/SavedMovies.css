@@ -1,60 +1,3 @@
-.saved-movies-navigation__movies {
-    margin: 0 20px 0 0;
-    width: auto;
-    color: #000;
-    font-family: Inter;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 18px;
-    text-decoration: none;
-}
-
-.saved-movies-navigation__saved-movies {
-    margin-right: 47px;
-    width: auto;
-    color: #000;
-    font-family: Inter;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 18px;
-}
-
-.saved-movies-navigation__profile {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 100px;
-    height: 32px;
-    border-radius: 50px;
-    border: 2px solid rgba(170, 170, 170, .2);
-    text-decoration: none;
-}
-
-.saved-movies-navigation__profile_image {
-    background-image: url(../../images/navigation-profile-image.svg);
-    width: 12px;
-    height: 14px;
-    margin-right: 7px;
-}
-
-.saved-movies-navigation__profile_text {
-    margin: 0;
-    width: auto;
-    color: #000;
-    font-family: Inter;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 16px;
-}
-
-.saved-movies-navigation__button {
-    display: none;
-}
-
 .saved-movies-navigation__main_popup {
     display: none;
 }
@@ -71,36 +14,7 @@
     display: none;
 }
 
-.saved-movies-navigation__movies:hover {
-    opacity: 0.8;
-}
-
-.saved-movies-navigation__profile:hover {
-    opacity: 0.8;
-}
-
 @media all and (max-width: 850px) {
-    .saved-movies-navigation__movies {
-        display: none;
-    }
-
-    .saved-movies-navigation__saved-movies {
-        display: none;
-    }
-
-    .saved-movies-navigation__profile {
-        display: none;
-    }
-
-    .saved-movies-navigation__button {
-        display: block;
-        background-image: url(../../images/button/navigation-button.svg);
-        width: 44px;
-        height: 44px;
-        border: none;
-        background-color: transparent;
-    }
-
     .saved-movies-navigation__main_popup {
         display: block;
         margin: 110px 0 0;
@@ -161,9 +75,22 @@
         text-decoration: none;
     }
 
-    .saved-movies-navigation__button:hover {
-        cursor: pointer;
-        opacity: 0.6;
+    .saved-movies-navigation__profile_image {
+        background-image: url(../../images/navigation-profile-image.svg);
+        width: 12px;
+        height: 14px;
+        margin-right: 7px;
+    }
+    
+    .saved-movies-navigation__profile_text {
+        margin: 0;
+        width: auto;
+        color: #000;
+        font-family: Inter;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 16px;
     }
 
     .saved-movies-navigation__main_popup:hover {

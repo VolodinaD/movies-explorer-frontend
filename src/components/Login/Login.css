@@ -63,6 +63,10 @@
     border: none;
 }
 
+.login__button_disabled {
+    background-color: #B5B8B1;
+}
+
 .login__button:hover {
     cursor: pointer;
     opacity: 0.8;
@@ -81,6 +85,17 @@
     text-align: center;
     font-family: Inter;
     font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.login__error {
+    margin: 0;
+    height: 0;
+    color: #FF4062;
+    font-family: Inter;
+    font-size: 10px;
     font-style: normal;
     font-weight: 400;
     line-height: normal;

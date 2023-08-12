@@ -96,7 +96,7 @@
 }
 
 .profile__edit_disabled {
-    opacity: 0.8;
+    opacity: 0.6;
 }
 
 .profile__exit {
@@ -129,9 +129,13 @@
     display: none;
 }
 
-.profile__edit:hover {
+.profile__edit_enabled:hover {
     cursor: pointer;
     opacity: 0.8;
+}
+
+.profile__edit_disabled:hover {
+    cursor: auto;
 }
 
 .profile__exit:hover {

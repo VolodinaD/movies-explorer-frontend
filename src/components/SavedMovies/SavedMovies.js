@@ -12,7 +12,7 @@ function SavedMovies(props) {
         <>
             <Header onMain={props.onMain} loggedIn={props.loggedIn} onPopupOpen={props.onPopupOpen} onRegister={props.onRegister} onLogin={props.onLogin} />
             <SearchForm findSavedFilms={props.findSavedFilms} handleCheckedClick={props.handleCheckedClick} />
-            <MoviesCardList cards={props.cards} deleteCard={props.deleteCard} />
+            <MoviesCardList cards={props.cards} deleteCard={props.deleteCard} isCardsMessage={props.isCardsMessage} />
             <Footer />
             <Popup isOpen={props.isPopupOpen} onClose={props.onPopupClose}>
                 <>

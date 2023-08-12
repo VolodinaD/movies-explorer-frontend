@@ -16,21 +16,51 @@ function Login(props) {
 
     const [formValid, setFormValid] = React.useState(false);
 
+    const isEmailValid = (email) => {
+        const emailRegexp = new RegExp(
+          /^[a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1}([a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1})*[a-zA-Z0-9]@[a-zA-Z0-9][-\.]{0,1}([a-zA-Z][-\.]{0,1})*[a-zA-Z0-9]\.[a-zA-Z0-9]{1,}([\.\-]{0,1}[a-zA-Z]){0,}[a-zA-Z0-9]{0,}$/i
+        );
+
+        return emailRegexp.test(email);
+    }
+
     function handleChange(e) {
         const {name, value} = e.target;
         const error = e.target.validationMessage;
-    
+        let errs = errors;
+
         setFormValue({
             ...formValue,
             [name]: value
         });
+        
+        switch(name) {
+            case "email": {
+                if (value === '') {
+                    errs.email = error;
+                } else {
+                    errs.email = isEmailValid(value) ? '' : 'Введите email в таком виде: email@mail.ru';
+                }
 
-        setErrors({
-            ...errors,
-            [name]: error
-        });
+                break;
+            }
+            case "password" : {
+                errs.password = error;
 
-        setFormValid(e.target.closest('form').checkValidity());
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+
+        setErrors(errs);
+
+        if(errors.email === '') {
+            setFormValid(e.target.closest('form').checkValidity());
+        } else {
+            setFormValid(false);
+        }
     }
 
     function handleSubmit(e) {
@@ -41,6 +71,7 @@ function Login(props) {
         } else {        
             props.handleLogin(formValue);
             setFormValue({email: '', password: ''});
+            setFormValid(false);
         }    
     }
 
@@ -51,7 +82,7 @@ function Login(props) {
                 <h2 className="login__title">Рады видеть!</h2>
                 <div className="login__container">
                     <p className="login__container_text">E-mail</p>
-                    <input type="email" name="email" id="email-input" className="login__container_input" value={formValue.email} onChange={handleChange} required />
+                    <input type="text" name="email" id="email-input" className="login__container_input" value={formValue.email} onChange={handleChange} required />
                     <span className="login__error">{errors.email}</span>
                 </div>
                 <div className="login__container">

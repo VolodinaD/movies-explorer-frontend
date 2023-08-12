@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext.js';
 import './App.css';
 import Main from '../Main/Main.js';
@@ -15,10 +15,13 @@ import moviesApi from '../../utils/MoviesApi.js';
 import * as mainApi from '../../utils/MainApi.js';
 
 function App() {
+    let location = useLocation();
+
     const [currentUser, setСurrentUser] = React.useState({});
     const [loggedIn, setLoggedIn] = React.useState(false);
     const [isPopupOpen, setPopupOpen] = React.useState(false);
     const [cards, setCards] = React.useState([]);
+    const [serverMovies, setServerMovies] = React.useState([]);
     const [savedCards, setSavedCards] = React.useState([]);
     const [isChecked, setChecked] = React.useState(false);
     const [isCheckedSaved, setCheckedSaved] = React.useState(false);
@@ -26,6 +29,8 @@ function App() {
     const [keywordSaved, setKeywordSaved] = React.useState('');
     const [isOpenPreloader, setOpenPreloader] = React.useState(false);
     const [message, setMessage] = React.useState('');
+    const [isCardsMessage, setCardsMessage] = React.useState('Выполните поиск фильма.');
+    const [isSavedCardsMessage, setSavedCardsMessage] = React.useState('У вас пока нет сохранённых фильмов.');
 
     const navigate = useNavigate();
 
@@ -50,15 +55,29 @@ function App() {
     }, [loggedIn]);
 
     React.useEffect(() => {
-        if (localStorage.getItem('findMovies')) {
+        if (localStorage.getItem('serverMovies')) {
             const movies = JSON.parse(localStorage.getItem('findMovies'));
             const checked = JSON.parse(localStorage.getItem('checked'));
             const keyword = JSON.parse(localStorage.getItem('keyword'));
+            const serverMovies = JSON.parse(localStorage.getItem('serverMovies'));
+            const сardsMessage = JSON.parse(localStorage.getItem('сardsMessage'));
             setCards(movies);
             setChecked(checked);
             setKeyword(keyword);
+            setServerMovies(serverMovies);
+            setCardsMessage(сardsMessage);
         }
     }, [loggedIn]);
+
+    if (location.pathname === "/movies" || location.pathname === "/" || location.pathname === "/profile") {
+        mainApi.getSavedCards()
+            .then((res) => {
+                setSavedCards(res.reverse());
+            })
+            .catch((err) => {
+                alert(err);
+            });
+    }
 
     function tokenCheck() {
         if (localStorage.getItem('isAuth')) {
@@ -111,17 +130,14 @@ function App() {
         mainApi.likeCard(card)
             .then((res) => {
                 setOpenPreloader(false);
-                setSavedCards([res, ...savedCards]);
-                const movies = cards;
-
-                movies.forEach(i => {
+                savedCards.unshift(res);
+                cards.forEach(i => {
                     if (i.id === card.id) {
                         i.saved = true;
                         i._id = res._id;
                     }
                 });
-
-                setCards(movies);
+                const movies = cards;
                 localStorage.setItem('findMovies', JSON.stringify(movies));
             })
             .catch((err) => {
@@ -135,18 +151,17 @@ function App() {
         mainApi.deleteCard(card._id)
             .then((res) => {
                 setOpenPreloader(false);
-                let movies = cards;
-                let sc = savedCards;
-
-                movies.forEach(i => {
+                cards.forEach(i => {
                     if (i._id === card._id) {
                         i.saved = false;
                     }
                 });
-
-                setCards(movies);
-                sc = sc.filter(i => i._id !== card._id)
-                setSavedCards(sc);
+                for (let i = savedCards.length - 1; i >= 0; --i) {
+                    if (savedCards[i]._id === card._id) {
+                        savedCards.splice(i,1);
+                    }
+                } 
+                const movies = cards;
                 localStorage.setItem('findMovies', JSON.stringify(movies));
             })
             .catch((err) => {
@@ -189,7 +204,7 @@ function App() {
             });
     }
 
-    function setMovies(checked, keyword, res) {
+    function filterMovies(checked, keyword, res) {
         const movies = res.filter(i => { 
             if (checked) {
                 return i.nameRU.toLowerCase().includes(keyword.toLowerCase()) && i.duration <= 40;
@@ -208,6 +223,9 @@ function App() {
 
         setCards(movies);
 
+        const сardsMessage = isCardsMessage;
+
+        localStorage.setItem('сardsMessage', JSON.stringify(сardsMessage));
         localStorage.setItem('findMovies', JSON.stringify(movies));
         localStorage.setItem('checked', JSON.stringify(checked));
         localStorage.setItem('keyword', JSON.stringify(keyword));
@@ -215,33 +233,40 @@ function App() {
 
     function handleCheckedClick(checked) {
         setOpenPreloader(true);
-        moviesApi.getCards()
-            .then((res) => {
-                setOpenPreloader(false);
-                setChecked(checked);
-                setMovies(checked, keyword, res);
-            })
-            .catch((err) => {
-                setOpenPreloader(false);
-                alert(err);
-            });
+        if (serverMovies.length === 0) {
+            setOpenPreloader(false);
+            //pass
+        } else {
+            setOpenPreloader(false);
+            setChecked(checked);
+            filterMovies(checked, keyword, serverMovies);
+        }
     }
 
     function findFilms(keyword) {
         setOpenPreloader(true);
-        moviesApi.getCards()
-            .then((res) => {
-                setOpenPreloader(false);
-                setKeyword(keyword);
-                setMovies(isChecked, keyword, res);
-            })
-            .catch((err) => {
-                setOpenPreloader(false);
-                alert(err);
-            });
+        if (serverMovies.length === 0) {
+            moviesApi.getCards()
+                .then((res) => {
+                    setOpenPreloader(false);
+                    setKeyword(keyword);
+                    filterMovies(isChecked, keyword, res);
+                    setServerMovies(res);
+                    setCardsMessage('Ничего не найдено.');
+                    localStorage.setItem('serverMovies', JSON.stringify(res));
+                })
+                .catch((err) => {
+                    setOpenPreloader(false);
+                    alert(err);
+                });
+        } else {
+            setOpenPreloader(false);
+            setKeyword(keyword);
+            filterMovies(isChecked, keyword, serverMovies);
+        }
     }
 
-    function setSavedMovies(checked, keyword, res) {
+    function filterSavedMovies(checked, keyword, res) {
         const savedMovies = res.filter(i => { 
             if (checked) {
                 return i.nameRU.toLowerCase().includes(keyword.toLowerCase()) && i.duration <= 40;
@@ -258,7 +283,8 @@ function App() {
             .then((res) => {
                 setOpenPreloader(false);
                 setCheckedSaved(checked);
-                setSavedMovies(checked, keywordSaved, res);
+                filterSavedMovies(checked, keywordSaved, res);
+                setSavedCardsMessage('Ничего не найдено.');
             })
             .catch((err) => {
                 setOpenPreloader(false);
@@ -272,7 +298,8 @@ function App() {
             .then((res) => {
                 setOpenPreloader(false);
                 setKeywordSaved(keyword);
-                setSavedMovies(isCheckedSaved, keyword, res);
+                filterSavedMovies(isCheckedSaved, keyword, res);
+                setSavedCardsMessage('Ничего не найдено.');
             })
             .catch((err) => {
                 setOpenPreloader(false);
@@ -302,8 +329,18 @@ function App() {
         localStorage.removeItem('findMovies');
         localStorage.removeItem('checked');
         localStorage.removeItem('keyword');
+        localStorage.removeItem('serverMovies');
+        localStorage.removeItem('сardsMessage');
         setLoggedIn(false);
         setOpenPreloader(false);
+        setServerMovies([]);
+        setCards([]);
+        setChecked(false);
+        setCheckedSaved(false);
+        setKeyword('');
+        setKeywordSaved('');
+        setCardsMessage('Выполните поиск фильма.');
+
         navigate('/', {replace: true});
     }
 
@@ -312,12 +349,12 @@ function App() {
             <Routes>
                 <Route path="/movies" element={<ProtectedRoute loggedIn={loggedIn} element={
                     <CurrentUserContext.Provider value={currentUser}>
-                        <Movies onMain={onMain} isPopupOpen={isPopupOpen} onPopupOpen={handleOpenPopupClick} onPopupClose={closePopup} cards={cards} findFilms={findFilms} likeCard={handleCardLike} deleteCard={handleCardDelete} handleCheckedClick={handleCheckedClick} isChecked={isChecked} keyword={keyword} loggedIn={loggedIn} onRegister={onRegister} onLogin={onLogin} />
+                        <Movies onMain={onMain} isPopupOpen={isPopupOpen} onPopupOpen={handleOpenPopupClick} onPopupClose={closePopup} cards={cards} findFilms={findFilms} likeCard={handleCardLike} deleteCard={handleCardDelete} handleCheckedClick={handleCheckedClick} isChecked={isChecked} keyword={keyword} loggedIn={loggedIn} onRegister={onRegister} onLogin={onLogin} isCardsMessage={isCardsMessage} />
                     </CurrentUserContext.Provider>
                 } />} />
                 <Route path="/saved-movies" element={<ProtectedRoute loggedIn={loggedIn} element={
                     <CurrentUserContext.Provider value={currentUser}>
-                        <SavedMovies onMain={onMain} isPopupOpen={isPopupOpen} onPopupOpen={handleOpenPopupClick} onPopupClose={closePopup} cards={savedCards} findSavedFilms={findSavedFilms} deleteCard={handleCardDelete} handleCheckedClick={handleCheckedClickSaved} loggedIn={loggedIn} onRegister={onRegister} onLogin={onLogin} />
+                        <SavedMovies onMain={onMain} isPopupOpen={isPopupOpen} onPopupOpen={handleOpenPopupClick} onPopupClose={closePopup} cards={savedCards} findSavedFilms={findSavedFilms} deleteCard={handleCardDelete} handleCheckedClick={handleCheckedClickSaved} loggedIn={loggedIn} onRegister={onRegister} onLogin={onLogin} isCardsMessage={isSavedCardsMessage} />
                     </CurrentUserContext.Provider>
                 } />} />
                 <Route path="/profile" element={<ProtectedRoute loggedIn={loggedIn} element={

@@ -12,7 +12,7 @@ function Movies(props) {
         <>
             <Header onMain={props.onMain} loggedIn={props.loggedIn} onPopupOpen={props.onPopupOpen} onRegister={props.onRegister} onLogin={props.onLogin} />
             <SearchForm findFilms={props.findFilms} handleCheckedClick={props.handleCheckedClick} isChecked={props.isChecked} keyword={props.keyword} />
-            <MoviesCardList cards={props.cards} likeCard={props.likeCard} deleteCard={props.deleteCard} isCardsMessage={props.isCardsMessage} />
+            <MoviesCardList cards={props.cards} likeCard={props.likeCard} deleteCard={props.deleteCard} isCardsMessage={props.isCardsMessage} isCards={props.isCards} setCards={props.setCards} getViewedCards={props.getViewedCards} />
             <Footer />
             <Popup isOpen={props.isPopupOpen} onClose={props.onPopupClose}>
                 <>

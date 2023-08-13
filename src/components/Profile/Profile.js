@@ -70,7 +70,7 @@ function Profile(props) {
     function handleSubmit(e) {
         e.preventDefault();
 
-        if(!formValid || ((formValue.name === currentUser.name) || (formValue.email === currentUser.email))) {
+        if(!formValid || ((formValue.name === currentUser.name) && (formValue.email === currentUser.email))) {
             return;
         } else {
             props.handleEditProfile(formValue);
@@ -94,7 +94,7 @@ function Profile(props) {
                 </div>
                 <span className="profile__error">{errors.email}</span>
                 <p className="profile__message">{props.message}</p>
-                <button type="submit" className={`profile__edit ${!formValid || ((formValue.name === currentUser.name) || (formValue.email === currentUser.email)) ? 'profile__edit_disabled' : 'profile__edit_enabled'}`} disabled={!formValid || ((formValue.name === currentUser.name) || (formValue.email === currentUser.email))}>Редактировать</button>
+                <button type="submit" className={`profile__edit ${!formValid || ((formValue.name === currentUser.name) && (formValue.email === currentUser.email)) ? 'profile__edit_disabled' : 'profile__edit_enabled'}`} disabled={!formValid || ((formValue.name === currentUser.name) && (formValue.email === currentUser.email))}>Редактировать</button>
                 <button type="button" className="profile__exit" onClick={props.signOut}>Выйти из аккаунта</button>
             </form>
             <Popup isOpen={props.isPopupOpen} onClose={props.onPopupClose}>

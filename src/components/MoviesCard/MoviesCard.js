@@ -6,12 +6,12 @@ function MoviesCard(props) {
     let location = useLocation();
 
     function handleLikeClick() {
-        props.likeCard((props.card));  
+        props.likeCard(props.card);  
         props.card.saved = true;
     }
 
     function handleDeleteLike() {
-        props.deleteCard((props.card));
+        props.deleteCard(props.card);
         props.card.saved = false;
     }
 

@@ -23,6 +23,7 @@ function App() {
     const [cards, setCards] = React.useState([]);
     const [serverMovies, setServerMovies] = React.useState([]);
     const [savedCards, setSavedCards] = React.useState([]);
+    const [savedCardsFull, setSavedCardsFull] = React.useState([]);
     const [isChecked, setChecked] = React.useState(false);
     const [isCheckedSaved, setCheckedSaved] = React.useState(false);
     const [keyword, setKeyword] = React.useState('');
@@ -31,6 +32,7 @@ function App() {
     const [message, setMessage] = React.useState('');
     const [isCardsMessage, setCardsMessage] = React.useState('Выполните поиск фильма.');
     const [isSavedCardsMessage, setSavedCardsMessage] = React.useState('У вас пока нет сохранённых фильмов.');
+    const [isInitialCards, setInitialCards] = React.useState(0);
 
     const navigate = useNavigate();
 
@@ -44,12 +46,13 @@ function App() {
             Promise.all([mainApi.getUserInfo(), mainApi.getSavedCards()])
                 .then((res) => {
                     setOpenPreloader(false);
-                    setСurrentUser(res[0].data);
-                    setSavedCards(res[1].reverse());
+                    setСurrentUser(res[0].data);                    
+                    setSavedCardsFull(res[1].reverse());
+                    setSavedCards(savedCardsFull);
                 })
                 .catch((err) => {
                     setOpenPreloader(false);
-                    alert(err);
+                    console.log(err);
                 });
         }
     }, [loggedIn]);
@@ -69,15 +72,11 @@ function App() {
         }
     }, [loggedIn]);
 
-    if (location.pathname === "/movies" || location.pathname === "/" || location.pathname === "/profile") {
-        mainApi.getSavedCards()
-            .then((res) => {
-                setSavedCards(res.reverse());
-            })
-            .catch((err) => {
-                alert(err);
-            });
-    }
+    React.useEffect(() => {
+        if (location.pathname === "/movies" || location.pathname === "/" || location.pathname === "/profile") {
+            setSavedCards(savedCardsFull);
+        }
+    });
 
     function tokenCheck() {
         if (localStorage.getItem('isAuth')) {
@@ -95,7 +94,7 @@ function App() {
                     })
                     .catch((err) => {
                         setOpenPreloader(false);
-                        alert(err);
+                        console.log(err);
                     });
             }
         }
@@ -130,15 +129,10 @@ function App() {
         mainApi.likeCard(card)
             .then((res) => {
                 setOpenPreloader(false);
-                savedCards.unshift(res);
-                cards.forEach(i => {
-                    if (i.id === card.id) {
-                        i.saved = true;
-                        i._id = res._id;
-                    }
-                });
-                const movies = cards;
-                localStorage.setItem('findMovies', JSON.stringify(movies));
+                savedCardsFull.unshift(res);
+                card.saved = true;
+                card._id = res._id;
+                localStorage.setItem('findMovies', JSON.stringify(cards));
             })
             .catch((err) => {
                 setOpenPreloader(false);
@@ -151,18 +145,35 @@ function App() {
         mainApi.deleteCard(card._id)
             .then((res) => {
                 setOpenPreloader(false);
-                cards.forEach(i => {
-                    if (i._id === card._id) {
-                        i.saved = false;
+                for (let i = savedCardsFull.length - 1; i >= 0; --i) {
+                    if (savedCardsFull[i]._id === card._id) {
+                        savedCardsFull.splice(i,1);
                     }
-                });
-                for (let i = savedCards.length - 1; i >= 0; --i) {
-                    if (savedCards[i]._id === card._id) {
-                        savedCards.splice(i,1);
-                    }
-                } 
-                const movies = cards;
-                localStorage.setItem('findMovies', JSON.stringify(movies));
+                }                
+                if (card.owner === undefined) {
+                    card.saved = false;
+                    card._id = null;
+                } else {      
+                    for (let j = savedCards.length - 1; j >= 0; --j) {
+                        if (savedCards[j]._id === card._id) {
+                            savedCards.splice(j,1);
+                        }
+                    } 
+                    cards.forEach(item => {                    
+                        if (item._id === card._id) {
+                            item.saved = false;
+                            item._id = null;
+                        }
+                    });
+                    serverMovies.forEach(item => {                    
+                        if (item._id === card._id) {
+                            item.saved = false;
+                            item._id = null;
+                        }
+                    });
+                }      
+
+                localStorage.setItem('findMovies', JSON.stringify(cards));
             })
             .catch((err) => {
                 setOpenPreloader(false);
@@ -204,8 +215,8 @@ function App() {
             });
     }
 
-    function filterMovies(checked, keyword, res) {
-        const movies = res.filter(i => { 
+    function filterMovies(checked, keyword, movieList) {
+        const movies = movieList.filter(i => { 
             if (checked) {
                 return i.nameRU.toLowerCase().includes(keyword.toLowerCase()) && i.duration <= 40;
             }
@@ -213,7 +224,7 @@ function App() {
         });
 
         movies.forEach(i => {
-            savedCards.forEach(n => {
+            savedCardsFull.forEach(n => {
                 if (i.id === n.movieId) {
                     i.saved = true;
                     i._id = n._id;
@@ -239,19 +250,20 @@ function App() {
         } else {
             setOpenPreloader(false);
             setChecked(checked);
-            filterMovies(checked, keyword, serverMovies);
+            filterMovies(checked, keyword, structuredClone(serverMovies));
         }
     }
 
     function findFilms(keyword) {
         setOpenPreloader(true);
+        setInitialCards(getViewedCards().cards);
         if (serverMovies.length === 0) {
             moviesApi.getCards()
                 .then((res) => {
                     setOpenPreloader(false);
                     setKeyword(keyword);
-                    filterMovies(isChecked, keyword, res);
-                    setServerMovies(res);
+                    setServerMovies(structuredClone(res));
+                    filterMovies(isChecked, keyword, structuredClone(res));                   
                     setCardsMessage('Ничего не найдено.');
                     localStorage.setItem('serverMovies', JSON.stringify(res));
                 })
@@ -262,49 +274,50 @@ function App() {
         } else {
             setOpenPreloader(false);
             setKeyword(keyword);
-            filterMovies(isChecked, keyword, serverMovies);
+            filterMovies(isChecked, keyword, structuredClone(serverMovies));
         }
     }
 
-    function filterSavedMovies(checked, keyword, res) {
-        const savedMovies = res.filter(i => { 
+    function filterSavedMovies(checked, keyword) {
+        setSavedCards(savedCardsFull.filter(i => { 
             if (checked) {
                 return i.nameRU.toLowerCase().includes(keyword.toLowerCase()) && i.duration <= 40;
             }
             return i.nameRU.toLowerCase().includes(keyword.toLowerCase());                  
-        });
-
-        setSavedCards(savedMovies.reverse());
+        }));
     }
 
     function handleCheckedClickSaved(checked) {
-        setOpenPreloader(true);
-        mainApi.getSavedCards()
-            .then((res) => {
-                setOpenPreloader(false);
-                setCheckedSaved(checked);
-                filterSavedMovies(checked, keywordSaved, res);
-                setSavedCardsMessage('Ничего не найдено.');
-            })
-            .catch((err) => {
-                setOpenPreloader(false);
-                alert(err);
-            });
+        setOpenPreloader(false);
+        setCheckedSaved(checked);
+        filterSavedMovies(checked, keywordSaved);
+        setSavedCardsMessage('Ничего не найдено.');
     }
 
     function findSavedFilms(keyword) {
-        setOpenPreloader(true);
-        mainApi.getSavedCards()
-            .then((res) => {
-                setOpenPreloader(false);
-                setKeywordSaved(keyword);
-                filterSavedMovies(isCheckedSaved, keyword, res);
-                setSavedCardsMessage('Ничего не найдено.');
-            })
-            .catch((err) => {
-                setOpenPreloader(false);
-                alert(err);
-            });
+        setOpenPreloader(false);
+        setKeywordSaved(keyword);
+        filterSavedMovies(isCheckedSaved, keyword);
+        setSavedCardsMessage('Ничего не найдено.');
+    }
+
+    function getViewedCards() {
+        if (window.innerWidth >= 1134) {
+            return {
+                cards: 12,
+                openCards: 3
+            }
+        } else if ((window.innerWidth >= 768) && (window.innerWidth < 1133)) {
+            return {
+                cards: 8,
+                openCards: 2
+            }
+        } else if ((window.innerWidth >= 320) && (window.innerWidth < 767)) {
+            return {
+                cards: 5,
+                openCards: 2
+            }
+        }
     }
 
     function handleEditProfile(data) {
@@ -340,7 +353,6 @@ function App() {
         setKeyword('');
         setKeywordSaved('');
         setCardsMessage('Выполните поиск фильма.');
-
         navigate('/', {replace: true});
     }
 
@@ -349,12 +361,12 @@ function App() {
             <Routes>
                 <Route path="/movies" element={<ProtectedRoute loggedIn={loggedIn} element={
                     <CurrentUserContext.Provider value={currentUser}>
-                        <Movies onMain={onMain} isPopupOpen={isPopupOpen} onPopupOpen={handleOpenPopupClick} onPopupClose={closePopup} cards={cards} findFilms={findFilms} likeCard={handleCardLike} deleteCard={handleCardDelete} handleCheckedClick={handleCheckedClick} isChecked={isChecked} keyword={keyword} loggedIn={loggedIn} onRegister={onRegister} onLogin={onLogin} isCardsMessage={isCardsMessage} />
+                        <Movies onMain={onMain} isPopupOpen={isPopupOpen} onPopupOpen={handleOpenPopupClick} onPopupClose={closePopup} cards={cards} findFilms={findFilms} likeCard={handleCardLike} deleteCard={handleCardDelete} handleCheckedClick={handleCheckedClick} isChecked={isChecked} keyword={keyword} loggedIn={loggedIn} onRegister={onRegister} onLogin={onLogin} isCardsMessage={isCardsMessage} isCards={isInitialCards} setCards={setInitialCards} getViewedCards={getViewedCards} />
                     </CurrentUserContext.Provider>
                 } />} />
                 <Route path="/saved-movies" element={<ProtectedRoute loggedIn={loggedIn} element={
                     <CurrentUserContext.Provider value={currentUser}>
-                        <SavedMovies onMain={onMain} isPopupOpen={isPopupOpen} onPopupOpen={handleOpenPopupClick} onPopupClose={closePopup} cards={savedCards} findSavedFilms={findSavedFilms} deleteCard={handleCardDelete} handleCheckedClick={handleCheckedClickSaved} loggedIn={loggedIn} onRegister={onRegister} onLogin={onLogin} isCardsMessage={isSavedCardsMessage} />
+                        <SavedMovies onMain={onMain} isPopupOpen={isPopupOpen} onPopupOpen={handleOpenPopupClick} onPopupClose={closePopup} cards={savedCards} findSavedFilms={findSavedFilms} deleteCard={handleCardDelete} handleCheckedClick={handleCheckedClickSaved} loggedIn={loggedIn} onRegister={onRegister} onLogin={onLogin} isCardsMessage={isSavedCardsMessage} isCards={isInitialCards} setCards={setInitialCards} getViewedCards={getViewedCards} />
                     </CurrentUserContext.Provider>
                 } />} />
                 <Route path="/profile" element={<ProtectedRoute loggedIn={loggedIn} element={

@@ -75,6 +75,7 @@ function App() {
     React.useEffect(() => {
         if (location.pathname === "/movies" || location.pathname === "/" || location.pathname === "/profile") {
             setSavedCards(savedCardsFull);
+            setKeywordSaved('');
         }
     });
 
@@ -125,26 +126,21 @@ function App() {
     }
 
     function handleCardLike(card) {
-        setOpenPreloader(true);
         mainApi.likeCard(card)
             .then((res) => {
-                setOpenPreloader(false);
                 savedCardsFull.unshift(res);
                 card.saved = true;
                 card._id = res._id;
                 localStorage.setItem('findMovies', JSON.stringify(cards));
             })
             .catch((err) => {
-                setOpenPreloader(false);
                 alert(err);
             });
     }
 
     function handleCardDelete(card) {
-        setOpenPreloader(true);
         mainApi.deleteCard(card._id)
             .then((res) => {
-                setOpenPreloader(false);
                 for (let i = savedCardsFull.length - 1; i >= 0; --i) {
                     if (savedCardsFull[i]._id === card._id) {
                         savedCardsFull.splice(i,1);
@@ -176,7 +172,6 @@ function App() {
                 localStorage.setItem('findMovies', JSON.stringify(cards));
             })
             .catch((err) => {
-                setOpenPreloader(false);
                 alert(err);
             });
     }

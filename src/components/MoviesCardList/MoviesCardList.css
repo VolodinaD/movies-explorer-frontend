@@ -1,0 +1,91 @@
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 360px);
+    justify-content: center;
+    row-gap: 32px;
+    column-gap: 28px;
+    width: 1140px;
+    margin-top: 80px;
+    margin-left: calc((100vw - 1140px) / 2);
+    padding-left: 0;
+}
+
+.cards__message {
+    margin: 170px 0 120px;
+    color: #808080;
+    text-align: center;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px;
+}
+
+.cards_bottom {
+    margin-bottom: 255px;
+}
+
+.cards__button {
+    width: 320px;
+    height: 36px;
+    margin-top: 44px; 
+    margin-bottom: 105px;
+    margin-left: calc((100vw - 320px) / 2);
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    border-radius: 6px;
+    border: none;
+    background-color: #F9F9F9;
+}
+
+.cards__button_remove {
+    display: none;
+}
+
+.cards__button:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+@media all and (min-width: 320px) and (max-width: 640px) {
+    .cards {
+        grid-template-columns: repeat(1, 300px);
+        row-gap: 16px;
+        width: auto;
+        margin: 50px 10px 0;
+    }
+
+    .cards_bottom {
+        margin-bottom: 190px;
+    }
+
+    .cards__button {
+        width: 240px;
+        margin-top: 78px;
+        margin-bottom: 100px;
+        margin-left: calc((100vw - 240px) / 2);
+    }
+}
+
+@media all and (min-width: 641px) and (max-width: 1279px) {
+    .cards {
+        grid-template-columns: repeat(auto-fit, 342px);
+        row-gap: 35px;
+        column-gap: 24px;
+        width: auto;
+        margin: 80px 30px 0;
+    }
+
+    .cards_bottom {
+        margin-bottom: 195px;
+    }
+
+    .cards__button {
+        margin-top: 80px;
+    }
+}

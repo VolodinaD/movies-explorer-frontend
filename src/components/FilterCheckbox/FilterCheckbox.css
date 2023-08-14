@@ -1,0 +1,97 @@
+.filter-checkbox {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    position: relative;
+    width: 167px;
+    margin-top: 26px;
+    color: #000;
+    font-family: Inter;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px;
+}
+
+.filter-checkbox__toggle {
+    display: none;
+}
+
+.filter-checkbox__span {
+    --offset: 0.25em;
+    --diameter: 1.8em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 36px;
+    height: 20px;
+    margin-right: 14px;
+    box-sizing: content-box;
+    position: relative;
+    border-radius: 100vw;
+    background-color: #BBBBBB;
+    transition: 250ms;
+    cursor: pointer;
+}
+
+.filter-checkbox__span::before {
+    content: '';
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border: 0.1 solid rgb(0 0 0 / 0.2);
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    left: var(--offset);
+    transform: translate(0, -50%);
+    background-color: #FFF;
+    transition: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .filter-checkbox__span {
+        transition-duration: 0ms;
+    }
+}
+
+.filter-checkbox__toggle:focus + .filter-checkbox__span {
+    outline: 1px dotted #212121;
+    outline: 1px auto -webkit-focus-ring-color;
+}
+
+.filter-checkbox__toggle:focus:not(:focus-visible) + .filter-checkbox__span {
+    outline: 0;
+}
+
+.filter-checkbox__toggle:checked + .filter-checkbox__span {
+    background-color: #2BE080;
+}
+
+.filter-checkbox__toggle:checked + .filter-checkbox__span::before {
+    transform: translate(100%, -50%);
+}
+
+.filter-checkbox__toggle:disabled + .filter-checkbox__span {
+    opacity: 0.6;
+    filter: grayscale(40%);
+    cursor: not-allowed;
+}
+
+[dir='rtl'] .filter-checkbox__span::before {
+    left: auto;
+    right: var(--offset);
+}
+
+[dir='rtl'] .filter-checkbox__toggle:checked + .filter-checkbox__span::before {
+    transform: translate(-100%, -50%);
+}
+
+@media all and (min-width: 320px) and (max-width: 640px) {
+    .filter-checkbox {
+        width: 149px;
+        margin-top: 30px;
+        font-size: 11px;
+    }
+}
